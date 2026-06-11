@@ -1,0 +1,533 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  background: #fff0f5;
+}
+html {
+  scroll-behavior: smooth;
+}
+html { scroll-snap-type: y mandatory; }
+section { scroll-snap-align: start; min-height: 100vh; }
+
+#intro {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  background: #fff0f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+#mainContent { display: none; }
+
+/* ENVELOPE */
+.envelope-wrap {
+  position: relative;
+  width: 240px;
+  height: 320px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin-top: -85px;
+}
+.envelope {
+  position: relative;
+  width: 240px;
+  height: 150px;
+  border-radius: 6px;
+  cursor: pointer;
+  perspective: 1000px;
+  overflow: visible;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 18px 26px rgba(255, 77, 109, 0.22));
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.envelope::before,
+.envelope::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+}
+.envelope::before {
+  background:
+    linear-gradient(145deg, transparent 49.5%, #ff6f8d 50%),
+    linear-gradient(215deg, transparent 49.5%, #ff5f80 50%),
+    #ff4d6d;
+  z-index: 2;
+}
+.envelope::after {
+  background: linear-gradient(135deg, #ff6f8d, #ff365f);
+  clip-path: polygon(0 100%, 50% 42%, 100% 100%);
+  z-index: 3;
+}
+.letter {
+  position: absolute;
+  width: 90%;
+  height: 85%;
+  background: white;
+  top: 13%;
+  left: 5%;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translate3d(0, 48%, 0) scale(0.96);
+  transform-origin: center bottom;
+  transition: transform 1.05s cubic-bezier(0.2, 0.85, 0.25, 1);
+  z-index: 1;
+  will-change: transform;
+  box-shadow: 0 12px 24px rgba(131, 28, 54, 0.16);
+}
+.flap {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ff8fab;
+  clip-path: polygon(0 0, 100% 0, 50% 60%);
+  transform-origin: top;
+  transform: rotateX(0deg);
+  transition: transform 0.85s cubic-bezier(0.2, 0.75, 0.15, 1);
+  z-index: 4;
+  backface-visibility: visible;
+  will-change: transform;
+}
+.letter-content {
+  font-family: 'Great Vibes', cursive;
+  font-size: 28px;
+  color: #ff4d6d;
+  opacity: 0;
+  transform: translateY(8px) scale(0.96);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  text-align: center;
+}
+
+/* OPEN STATES */
+.envelope.open {
+  pointer-events: none;
+}
+.envelope.open .letter {
+  animation: none;
+  transform: translate3d(0, 48%, 0) scale(0.96);
+}
+.envelope.open .flap {
+  transform: rotateX(-165deg);
+}
+.envelope.lift .flap {
+  z-index: 0;
+}
+.envelope.lift .letter {
+  transform: translate3d(0, -116%, 36px) scale(1.04);
+}
+.envelope.lift .letter-content {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition-delay: 0.55s;
+}
+
+/* FLOAT BEFORE OPEN */
+.envelope:not(.open) .letter {
+  animation: floatLetter 2.7s ease-in-out infinite;
+}
+@keyframes floatLetter {
+  0%, 100% { transform: translate3d(0, 48%, 0) scale(0.96); }
+  50% { transform: translate3d(0, 42%, 0) scale(0.96); }
+}
+
+/* FADE OUT */
+.envelope.fade-out {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.9);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+/* HERO */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background-image: url('../images/hero.jpeg');
+  background-size: cover;
+  background-position: center;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+}
+
+/* overlay */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4); /* dark layer */
+  z-index: 1;
+}
+
+/* make content appear above overlay */
+.hero > * {
+  position: relative;
+  z-index: 2;
+}
+.hero.show::before {
+  opacity: 1;
+  transform: scale(1);
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+.hero-content > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.hero.show .hero-kicker {
+  transition-delay: 0.45s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero.show .names {
+  transition-delay: 0.8s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero.show .tagline {
+  transition-delay: 1.15s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero.show .wedding-date {
+  transition-delay: 1.5s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero.show .venue {
+  transition-delay: 1.85s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero.show #countdown {
+  transition-delay: 2.2s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero.show .scroll-cue {
+  transition-delay: 2.55s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero-kicker {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 300;
+}
+.names {
+  font-family: 'Great Vibes', cursive;
+  font-size: 64px;
+  line-height: 0.95;
+  margin: 0 0 14px;
+  text-shadow: 2px 2px 8px rgba(255,255,255,0.4);
+}
+.tagline,
+.wedding-date,
+.venue,
+.scroll-cue {
+  margin: 10px 0;
+}
+.wedding-date {
+  font-size: 20px;
+  font-weight: 600;
+}
+.venue {
+  line-height: 1.6;
+}
+#countdown {
+  font-size: 22px;
+  margin-top: 20px;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+}
+.scroll-cue {
+  margin-top: 26px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+/* EVENTS */
+.event.full {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+}
+.event.full::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 0.9s ease, transform 1.2s ease;
+}
+.event.full.reveal::before {
+  opacity: 1;
+  transform: scale(1);
+}
+.event-content {
+  position: relative;
+  z-index: 1;
+}
+.event-content > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.event.full.reveal .event-content > *:nth-child(1) {
+  transition-delay: 0.25s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.event.full.reveal .event-content > *:nth-child(2) {
+  transition-delay: 0.55s;
+  opacity: 1;
+  transform: translateY(0);
+}
+.event.full.reveal .event-content > *:nth-child(3) {
+  transition-delay: 0.85s;
+  opacity: 1;
+  transform: translateY(0);
+}
+/* COMMON STYLE FOR ALL EVENT SECTIONS */
+.engagement,
+.haldi,
+.wedding,
+.reception {
+  position: relative;
+  overflow: hidden;
+
+  min-height: 100vh;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  color: white;
+}
+.engagement {
+  background: url('../images/engagement.jpg') center/cover no-repeat;
+}
+.haldi {
+  background: url('../images/haldi.jpg') center/cover no-repeat;
+}
+.wedding {
+  background: url('../images/wedding.jpg') center/cover no-repeat;
+}
+.betrothal {
+  background: url('../images/betrothal.jpg') center/cover no-repeat;
+}
+/* overlay for readability */
+.engagement::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+/* VOTING */
+.section { padding: 60px; text-align: center; }
+.vote-section {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+.side-photo {
+  position: absolute;
+  top: 50%;
+  width: 170px;
+  aspect-ratio:auto;
+  border: 2px dashed rgba(255, 77, 109, 0.55);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.55);
+  color: #ff4d6d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transform: translateY(-50%);
+}
+.side-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.groom-photo {
+  background-image: url('images/delvin.jpg');
+  background-position: center;
+  background-size: cover;
+  left: clamp(18cm, 18vw, 120px);
+}
+.bride-photo {
+  
+  right: clamp(18cm, 8vw, 120px);
+}
+.team-status {
+  color: #ff4d6d;
+  font-weight: 600;
+}
+.vote-container { display: flex; justify-content: center; gap: 20px; }
+.vote-box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  width: 122px;
+  min-height: 136px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.vote-box h3 {
+  margin: 0 0 18px;
+}
+.vote-box div {
+  margin-bottom: 8px;
+}
+.vote-box:first-child {
+  transform: translateX(-80px);
+}
+.vote-box:last-child {
+  transform: translateX(80px);
+}
+.vote-section.reveal .vote-box {
+  opacity: 1;
+  transform: translateX(0);
+}
+.vote-section.reveal .vote-box:last-child {
+  transition-delay: 0.15s;
+}
+.event.full.team-event { display: none; }
+body[data-team="groom"] .event.full.groom-event,
+body[data-team="bride"] .event.full.bride-event {
+  display: flex;
+}
+button.selected {
+  background: #222;
+}
+
+/* BUTTON */
+button {
+  padding: 10px 15px;
+  background: #ff4d6d;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+button:hover {
+  background: #ff8fab;
+  transform: scale(1.05);
+}
+
+/* RSVP */
+.rsvp textarea, .rsvp input {
+  display: block;
+  margin: 10px auto;
+  padding: 12px;
+  width: 260px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.rsvp textarea {
+  height: 100px;
+  resize: none;
+}
+.rsvp textarea:focus, .rsvp input:focus {
+  border-color: #ff4d6d;
+  outline: none;
+  box-shadow: 0 0 6px rgba(255,77,109,0.4);
+}
+
+/* MESSAGES */
+#messages {
+  margin-top: 20px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.message-card {
+  background: white;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+.message-card strong { color: #ff4d6d; }
+.message-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  .envelope-wrap {
+    width: 180px;
+    height: 260px;
+    margin-top: -70px;
+  }
+  .envelope { width: 180px; height: 120px; }
+  .letter-content { font-size: 22px; }
+  .names { font-size: 48px; }
+  .vote-container {
+    flex-direction: column;
+    width: min(280px, 100%);
+    align-items: center;
+  }
+  .side-photo {
+    position: static;
+    width: min(180px, 80vw);
+    aspect-ratio: 4 / 3;
+    transform: none;
+    margin: 8px 0;
+  }
+  .groom-photo {
+    order: -2;
+  }
+  .bride-photo {
+    order: -1;
+  }
+  .vote-box:first-child {
+    transform: translateX(-42px);
+  }
+  .vote-box:last-child {
+    transform: translateX(42px);
+  }
+  .vote-section.reveal .vote-box {
+    transform: translateX(0);
+  }
+}
+.engagement > *,
+.haldi > *,
+.wedding > *,
+.reception > * {
+  position: relative;
+  z-index: 2;
+}
