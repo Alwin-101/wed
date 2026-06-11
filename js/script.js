@@ -1,5 +1,6 @@
 // Envelope open sequence
 function openInvite() {
+  document.querySelector(".tap-hint").style.display = "none";
   const env = document.querySelector(".envelope");
 
   if (env.classList.contains("open")) return; // prevent double click

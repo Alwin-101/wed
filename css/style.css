@@ -754,3 +754,29 @@ button:hover {
 .note p{
   color: #000000;
 }
+.vote-center h4{
+  font-family: 'Great Vibes', cursive;
+  font-size: 30px;
+  color: #ffffff;
+  text-shadow: 0 4px 8px rgb(0, 0, 0);
+  margin-bottom: 12px;
+}
+.tap-hint {
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  font-size: 14px;
+  color: #ff4d6d;
+  font-family: 'Poppins', sans-serif;
+
+  opacity: 0.8;
+  animation: pulse 1.5s infinite;
+  z-index: 999;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+  50% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+}
