@@ -3,17 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <title>Wedding Invite 💍</title>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<!-- ✅ Supabase (correct version) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+<!-- CSS -->
 <link rel="stylesheet" href="css/style.css">
 
+<!-- Confetti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <body>
-<div class="flowers"></div>
+
 <!-- 💌 ENVELOPE -->
 <section id="intro">
   <div class="envelope-wrap">
@@ -33,6 +41,7 @@
     </div>
   </div>
 </section>
+
 <!-- 💍 MAIN CONTENT -->
 <div id="mainContent">
 
@@ -49,121 +58,116 @@
     </div>
   </section>
 
-  <!-- VOTING -->
+  <!-- 🗳️ TEAM VOTE -->
   <section class="section vote-section">
+    <div class="vote-layout">
+      <div class="vote-center">
 
-  <div class="vote-layout">
+        <img src="images/coup.png" class="vote-image" alt="Couple">
 
-    <!-- LEFT
-    <div class="side-photo left">
-      <img src="images/delvin.jpg" alt="Groom">
-    </div> -->
+        <h2>Choose Your Side 😏</h2>
+        <p id="teamStatus">Pick a team to see your Haldi invite.</p>
 
-    <!-- CENTER -->
-    <div class="vote-center"img src="images/coup.png">
-      <h2>Choose Your Side 😏</h2>
-      <p id="teamStatus">Pick a team to see your Haldi invite.</p>
+        <button onclick="joinTeam('groom')" id="groomBtn">
+          💙 Groom (<span id="groomCount">1</span>)
+        </button>
 
-      <div class="vote-container">
-        <div class="vote-box">
-          <h3>💙 Groom</h3>
-          <button onclick="joinTeam('groom')">Team Groom</button>
+        <button onclick="joinTeam('bride')" id="brideBtn">
+          💖 Bride (<span id="brideCount">0</span>)
+        </button>
+
+        <!-- Slider -->
+        <div class="slider-wrapper">
+          <div class="slider-bar">
+            <div id="groomBar"></div>
+            <div id="brideBar"></div>
+          </div>
+          <p id="sliderText">Even match ⚖️</p>
         </div>
 
-        <div class="vote-box">
-          <h3>💖 Bride</h3>
-          <button onclick="joinTeam('bride')">Team Bride</button>
-       
-        </div>
       </div>
-      <h4>We can't wait to celebrate with you!</h3>
     </div>
+  </section>
 
-    <!-- RIGHT
-    <div class="side-photo right">
-      <img src="images/sivya.jpg" alt="Bride">
-    </div> -->
+  <!-- 🎉 EVENTS -->
 
-  </div>
-</section>
-
-  <!-- 🎊 EVENTS -->
+  <!-- Engagement -->
   <section class="event full engagement">
     <div class="event-content">
-      <h1>💍 Engagement 💍 </h1>
-      <p>June 21, 2026 Sunday • 11:00 AM</p>
-      <p>Royal Treat, Ollur </p>
-      <h2> We Decided on our Forever</h2>
-<a href="https://www.google.com/maps/place/Royal+Treat+Garden+party+place/@10.4825642,76.2310647,17z/data=!3m1!4b1!4m6!3m5!1s0x3ba7f030fc5c7f83:0xfd285c93e7b6c69f!8m2!3d10.4825642!4d76.233645!16s%2Fg%2F11c6s0mdzg?entry=ttu&g_ep=EgoyMDI2MDYwMy4xIKXMDSoASAFQAw%3D%3D"
-   class="btn btn-primary">
-  📍 Open Location
-</a>
+      <h1>💍 Engagement 💍</h1>
+      <p>June 21, 2026 • 11:00 AM</p>
+      <p>Royal Treat, Ollur</p>
+      <h2>We Decided on our Forever</h2>
+      <a href="https://www.google.com/maps/place/Royal+Treat+Garden+party+place" class="btn btn-primary">
+        📍 Open Location
+      </a>
     </div>
   </section>
 
-  <section class="event full haldi team-event groom-event">
-    <div class="event-content">
+  <section class="event full haldi">
+    
+    <div class="team-event groom-event event-content">
       <h1>💛 Groom's Haldi 💛</h1>
-      <p>Aug 22, 2026 Saturday Time • 8:00 pm</p>
+      <p>Aug 22, 2026 • 8:00 PM</p>
       <h2>Come ready to get messy, laugh loud & glow brighter!</h2>
-      <h3>Vintage yellow - No prints, keep it minimal</h3>
-      <p>Groom's Home Celebration</p>
+      <h3>Vintage yellow - minimal style</h3>
+      <p>Groom's Home</p>
     </div>
-  </section>
-  <section class="event full haldi team-event bride-event">
-    <div class="event-content">
+
+    <div class="team-event bride-event event-content">
       <h1>💛 Bride's Haldi 💛</h1>
-      <p>Aug 16, 2026 Thursday Time • 7:00 pm</p>
-      <h2>Come ready to get messy, laugh loud & glow brighter!</h2>
-      <h3>Vintage yellow - No prints, keep it minimal</h3>
-      <p>Bride's Home Celebration</p>
+      <p>Aug 22, 2026 • 8:00 PM</p>
+      <h2>Let’s celebrate with colors, laughter & love!</h2>
+      <h3>Yellow elegance theme</h3>
+      <p>Bride's Home</p>
     </div>
+
   </section>
-<section class="event full betrothal">
+
+  <section class="event full betrothal">
     <div class="event-content">
       <h1>💞 Betrothal 💞</h1>
-      <p>Aug 17, 2026  Monday • 11:00 AM</p>
-      <p>St. John The Baptist Church<br>Nedupuzha</p>
-      <h2>The Beginning of Forever -Our betrothal Ceremony</h2>
-      <a href="https://www.google.com/maps/place/St.+John+The+Baptist+Church,+Nedupuzha/@10.4916869,76.1549022,14z/data=!4m6!3m5!1s0x3ba7f1e3a9a574b3:0xb434a8be4f8596ab!8m2!3d10.4916869!4d76.193011!16s%2Fg%2F1ptw8s1sm?entry=ttu&g_ep=EgoyMDI2MDYwMy4xIKXMDSoASAFQAw%3D%3D"
-   class="btn btn-primary">
-  📍 Open Location
-</a>
+      <p>Aug 17, 2026 • 11:00 AM</p>
+      <p>St. John The Baptist Church, Nedupuzha</p>
+      <h2>The Beginning of Forever</h2>
+      <a href="https://www.google.com/maps/place/St.+John+The+Baptist+Church,+Nedupuzha" class="btn btn-primary">
+        📍 Open Location
+      </a>
     </div>
   </section>
-  <section class="event full wedding">
-    <div class="event-content">
-      <h1>💒 Wedding 💒 </h1>
-      <p>Aug 23, 2026 Sunday • 3:00 PM</p>
-      <p>Our Lady of Dolours' Church<br>Athani</p>
-      
-      <h2>The sacred union - the moment we've been waiting for!</h2>
-      <a href="https://www.google.com/maps/place/Our+Lady+of+Dolours'+Church+Athani/@10.6155036,76.2113865,17z/data=!3m1!4b1!4m6!3m5!1s0x3ba7e91abf082a05:0x658039f0971f3406!8m2!3d10.6155036!4d76.2139614!16s%2Fg%2F1tddqmkd?entry=ttu&g_ep=EgoyMDI2MDYwMy4xIKXMDSoASAFQAw%3D%3D"
-   class="btn btn-primary">
-  📍 Open Location
-    </a>
-    </div>
-  </section>
-<!-- -->
-<section class="event full note">
-  <div class="flower-zone"></div>
 
-  <div class="event-content">
-    <h1>A Note From Us</h1>
-    <p>We’re tying our hearts together and would love for you to be there. Come celebrate these special moments with us and create memories we’ll cherish forever.</p>
-    <p>Delvin & Sivya</p>
-  </div>
-</section>
-  <!-- RSVP -->
+  <!-- Note -->
+  <section class="event full note">
+    <div class="flower-zone"></div>
+    <div class="event-content">
+      <h1>A Note From Us</h1>
+      <p>
+        We’re tying our hearts together and would love for you to be there.
+        Come celebrate with us and create memories we’ll cherish forever.
+      </p>
+      <p>Delvin & Sivya</p>
+    </div>
+  </section>
+
+  <!-- 💌 RSVP -->
   <section class="section rsvp">
     <h2>Leave a Message 💌</h2>
+
     <input type="text" id="name" placeholder="Your Name">
-    <textarea id="message" placeholder="Will you attend? Drop a message... 😊"></textarea>
+    <textarea id="message" placeholder="Drop a message... 😊"></textarea>
+
     <button onclick="submitRSVP()">Send</button>
+
     <div id="messages"></div>
   </section>
+
 </div>
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Your JS -->
 <script src="js/script.js"></script>
+
 </body>
 </html>

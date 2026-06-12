@@ -1,236 +1,262 @@
-// Envelope open sequence
+// ===============================
+// 💌 SUPABASE SETUP
+// ===============================
+const SUPABASE_URL = "https://guxmdiyahpgafvjmxcjy.supabase.co";
+const SUPABASE_KEY = "sb_publishable_55wDOnBQuHrucnL4KCBhLg_mr8BYmXN";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+// ===============================
+// 💌 OPEN ENVELOPE ANIMATION
+// ===============================
 function openInvite() {
-  document.querySelector(".tap-hint").style.display = "none";
-  const env = document.querySelector(".envelope");
+  const envelope = document.querySelector(".envelope");
+  const main = document.getElementById("mainContent");
 
-  if (env.classList.contains("open")) return; // prevent double click
+  envelope.classList.add("open");
 
-  // Step 1: open flap
-  env.classList.add("open");
-
-  // Step 2: lift the letter after the flap has opened
+  // Wait for flap rotation to finish, then lift letter
   setTimeout(() => {
-    env.classList.add("lift");
-  }, 650);
+    envelope.classList.add("lift");
+  }, 850); 
 
-  // Step 3: wait for letter animation to finish
-  env.addEventListener("transitionend", function handler(e) {
-    if (e.propertyName === "transform" && e.target.classList.contains("letter")) {
-      env.removeEventListener("transitionend", handler);
-
-      // Pause briefly before fade
-      setTimeout(() => {
-        env.classList.add("fade-out");
-
-        // Step 4: show site after fade
-        setTimeout(() => {
-          document.getElementById("intro").style.display = "none";
-          document.getElementById("mainContent").style.display = "block";
-
-          if (typeof confetti === "function") {
-            confetti({
-              particleCount: 200,
-              spread: 80,
-              angle: 60,
-              origin: { x: 0, y: 1 }
-            });
-
-            confetti({
-              particleCount: 200,
-              spread: 80,
-              angle: 120,
-              origin: { x: 1, y: 1 }
-            });
-          }
-
-          document.querySelector(".hero").classList.add("show");
-          startCountdown();
-        }, 800); // fade duration
-      }, 400); // pause before fade
-    }
-  });
-
-  // Safety fallback: reveal after 3s even if transition fails
   setTimeout(() => {
-    if (document.getElementById("mainContent").style.display !== "block") {
-      document.getElementById("intro").style.display = "none";
-      document.getElementById("mainContent").style.display = "block";
-      document.querySelector(".hero").classList.add("show");
-      startCountdown();
-    }
-  }, 3800);
+    document.getElementById("intro").style.display = "none";
+    main.style.display = "block";
+
+    confetti({
+      particleCount: 180,
+      spread: 90,
+      origin: { y: 0.6 }
+    });
+  }, 1800);
 }
 
-/* ⏳ COUNTDOWN */
-function startCountdown() {
-  const targetDate = new Date("2026-08-23T10:00:00").getTime(); // wedding date
 
-  setInterval(() => {
-    const now = new Date().getTime();
-    let gap = targetDate - now;
+// ===============================
+// ⏳ COUNTDOWN TIMER
+// ===============================
+const weddingDate = new Date("August 23, 2026 15:00:00").getTime();
 
-    if (gap < 0) gap = 0;
+function updateCountdown() {
+  const now = new Date().getTime();
+  const gap = weddingDate - now;
 
-    const d = Math.floor(gap / (1000*60*60*24));
-    const h = Math.floor((gap / (1000*60*60)) % 24);
-    const m = Math.floor((gap / (1000*60)) % 60);
-
-        document.getElementById("countdown").innerHTML =
-      `${d} Days ${h} Hours ${m} Minutes`;
-  }, 1000);
-}
-
-/* 🗳️ VOTING SYSTEM */
-let groomVotes = 0;
-let brideVotes = 0;
-let selectedTeam = "";
-
-document.addEventListener("DOMContentLoaded", () => {
-  const groomHaldi = document.querySelector(".groom-event .event-content");
-
-  if (groomHaldi) {
-    groomHaldi.innerHTML = `
-      <h1>Groom's Haldi</h1>
-      <p>Sep 21, 2026 - 10:00 AM</p>
-      <p>Groom's Home Celebration</p>
-    `;
-  }
-
-  setupEventReveals();
-  setupVoteReveal();
-});
-
-function setupVoteReveal() {
-  const voteSection = document.querySelector(".vote-section");
-
-  if (!voteSection) return;
-
-  if (!("IntersectionObserver" in window)) {
-    voteSection.classList.add("reveal");
+  if (gap <= 0) {
+    document.getElementById("countdown").innerHTML = "🎉 It's Wedding Time!";
     return;
   }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("reveal");
-        }
-      });
-    },
-    { threshold: 0.45 }
-  );
+  const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+  const h = Math.floor((gap / (1000 * 60 * 60)) % 24);
+  const m = Math.floor((gap / (1000 * 60)) % 60);
+  const s = Math.floor((gap / 1000) % 60);
 
-  observer.observe(voteSection);
+  document.getElementById("countdown").innerHTML = `${d}d ${h}h ${m}m ${s}s`;
 }
 
-function setupEventReveals() {
-  const events = document.querySelectorAll(".event.full");
+setInterval(updateCountdown, 1000);
 
-  if (!("IntersectionObserver" in window)) {
-    events.forEach((event) => event.classList.add("reveal"));
-    return;
+
+// ===============================
+// 🗳 TEAM VOTING SYSTEM (With Sync Backups)
+// ===============================
+// NOTE: For true production global syncing, fetch these aggregates from a Supabase table!
+let groomCount =0; // Adjusted base defaults for visual balance on initial render
+let brideCount =0;
+
+function updateVoteUI() {
+  const groomCountEl = document.getElementById("groomCount");
+  const brideCountEl = document.getElementById("brideCount");
+  
+  if (groomCountEl && brideCountEl) {
+    groomCountEl.innerText = groomCount;
+    brideCountEl.innerText = brideCount;
   }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("reveal");
-        }
-      });
-    },
-    { threshold: 0.45 }
-  );
+  const total = groomCount + brideCount;
+  const groomPercent = total > 0 ? (groomCount / total) * 100 : 50;
+  const bridePercent = total > 0 ? (brideCount / total) * 100 : 50;
 
-  events.forEach((event) => observer.observe(event));
-}
+  const groomBar = document.getElementById("groomBar");
+  const brideBar = document.getElementById("brideBar");
 
-function revealVisibleEvents() {
-  document.querySelectorAll(".event.full").forEach((event) => {
-    const rect = event.getBoundingClientRect();
-    const isVisible =
-      rect.top < window.innerHeight * 0.65 &&
-      rect.bottom > window.innerHeight * 0.35;
+  if (groomBar && brideBar) {
+    groomBar.style.width = groomPercent + "%";
+    brideBar.style.width = bridePercent + "%";
+  }
 
-    if (isVisible && getComputedStyle(event).display !== "none") {
-      event.classList.add("reveal");
+  const sliderText = document.getElementById("sliderText");
+  if (sliderText) {
+    if (groomPercent > bridePercent) {
+      sliderText.innerText = "💙 Groom Side Dominating!";
+    } else if (bridePercent > groomPercent) {
+      sliderText.innerText = "💖 Bride Side Winning!";
+    } else {
+      sliderText.innerText = "Even match ⚖️";
     }
-  });
+  }
 }
 
+function displayHaldiSchedule(team) {
+  const groomEvent = document.querySelector(".groom-event");
+  const brideEvent = document.querySelector(".bride-event");
+  const statusText = document.getElementById("teamStatus");
+
+  if (team === "groom") {
+    // Add active class to show Groom, remove from Bride
+    if (groomEvent) groomEvent.classList.add("active");
+    if (brideEvent) brideEvent.classList.remove("active");
+    if (statusText) statusText.innerText = "Showing Groom's Haldi schedule 💛";
+  } else if (team === "bride") {
+    // Add active class to show Bride, remove from Groom
+    if (brideEvent) brideEvent.classList.add("active");
+    if (groomEvent) groomEvent.classList.remove("active");
+    if (statusText) statusText.innerText = "Showing Bride's Haldi schedule 💛";
+  }
+}
 function joinTeam(team) {
-  if (selectedTeam === team) return;
-
-  if (selectedTeam === "groom") {
-    groomVotes = Math.max(0, groomVotes - 1);
-  } else if (selectedTeam === "bride") {
-    brideVotes = Math.max(0, brideVotes - 1);
+  if (localStorage.getItem("team")) {
+    alert("You already voted 😏");
+    return;
   }
 
   if (team === "groom") {
-    groomVotes++;
-  } else if (team === "bride") {
-    brideVotes++;
+    groomCount++;
+  } else {
+    brideCount++;
   }
 
-  selectedTeam = team;
-  document.body.dataset.team = team;
-  document.querySelectorAll(".team-event").forEach((event) => {
-    event.classList.remove("reveal");
+  localStorage.setItem("team", team);
+  displayHaldiSchedule(team);
+
+  // 🎊 small confetti feedback
+  confetti({
+    particleCount: 80,
+    spread: 60,
+    origin: { y: 0.7 }
   });
-  requestAnimationFrame(revealVisibleEvents);
 
-  document.getElementById("groomCount").innerText = groomVotes;
-  document.getElementById("brideCount").innerText = brideVotes;
-  document.getElementById("teamStatus").innerText =
-    team === "groom"
-      ? "You are viewing the Groom's Haldi invite."
-      : "You are viewing the Bride's Haldi invite.";
-
-  document.getElementById("groomButton").classList.toggle("selected", team === "groom");
-  document.getElementById("brideButton").classList.toggle("selected", team === "bride");
+  updateVoteUI();
 }
 
-/* 💬 RSVP COMMENT SYSTEM */
-function submitRSVP() {
+
+// ===============================
+// 💌 RSVP - SUBMIT
+// ===============================
+async function submitRSVP() {
   const nameInput = document.getElementById("name");
   const messageInput = document.getElementById("message");
-  const messages = document.getElementById("messages");
 
   const name = nameInput.value.trim();
   const message = messageInput.value.trim();
 
-  if (name === "" || message === "") return;
+  if (!name || !message) {
+    alert("Please fill all fields");
+    return;
+  }
 
-  const div = document.createElement("div");
-  div.className = "message-card";
+  const { error } = await supabaseClient
+    .from("rsvps")
+    .insert([{ name, message }]);
 
-  const time = new Date().toLocaleString();
-  div.innerHTML = `<strong>${name}:</strong><br>${message}<br><small>${time}</small>`;
-
-  messages.prepend(div);
+  if (error) {
+    console.error("Supabase Insertion Error:", error);
+    alert("Failed to send 😢");
+    return;
+  }
 
   nameInput.value = "";
   messageInput.value = "";
+
+  // Note: Local execution fallback call if real-time engine takes time to broadcast
+  loadMessages();
 }
-function createNoteFlowers() {
-  const zone = document.querySelector(".flower-zone");
-  const emojis = ["🌸", "🌷", "💮", "🌺"];
 
-  for (let i = 0; i < 18; i++) {
-    const flower = document.createElement("div");
-    flower.classList.add("flower");
 
-    flower.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+// ===============================
+// 📩 LOAD RSVP MESSAGES
+// ===============================
+async function loadMessages() {
+  const { data, error } = await supabaseClient
+    .from("rsvps")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-    flower.style.left = Math.random() * 100 + "%";
-    flower.style.animationDuration = 3 + Math.random() * 4 + "s";
-    flower.style.fontSize = 14 + Math.random() * 18 + "px";
-    flower.style.animationDelay = Math.random() * 3 + "s";
-
-    zone.appendChild(flower);
+  if (error) {
+    console.error("Supabase Select Error:", error);
+    return;
   }
+
+  const messagesDiv = document.getElementById("messages");
+  if (!messagesDiv) return;
+  
+  messagesDiv.innerHTML = "";
+
+  data.forEach(item => {
+    const div = document.createElement("div");
+    div.classList.add("msg", "card", "p-3", "mb-2", "shadow-sm"); // Boosted styling layout matching Bootstrap layout framework
+
+    div.innerHTML = `
+      <strong>${escapeHTML(item.name)}</strong>
+      <p class="mb-0 text-muted">${escapeHTML(item.message)}</p>
+    `;
+
+    messagesDiv.appendChild(div);
+  });
 }
 
-createNoteFlowers();
+// Helper utility function to prevent layout styling injection attacks (XSS) via guest messages
+function escapeHTML(str) {
+  return str.replace(/[&<>'"]/g, 
+    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+  );
+}
+
+
+// ===============================
+// 🔴 REALTIME RSVP UPDATES
+// ===============================
+supabaseClient
+  .channel("rsvp-live")
+  .on(
+    "postgres_changes",
+    { event: "INSERT", schema: "public", table: "rsvps" },
+    () => {
+      loadMessages();
+    }
+  )
+  .subscribe();
+
+
+// ===============================
+// 🌸 SCROLL ANIMATIONS (FADE IN)
+// ===============================
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("show");
+    }
+  });
+}, { threshold: 0.1 }); // triggers when 10% of element framework hits screen window boundaries
+
+
+// ===============================
+// 🚀 INITIAL LOAD
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+  // Bind dynamic observer targets
+  document.querySelectorAll("section, .event").forEach(el => {
+    observer.observe(el);
+  });
+
+  updateVoteUI();
+  loadMessages();
+
+  // Restore dynamic user layout state configurations
+  const savedTeam = localStorage.getItem("team");
+  if (savedTeam) {
+    displayHaldiSchedule(savedTeam);
+  }
+});
