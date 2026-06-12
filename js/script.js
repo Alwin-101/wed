@@ -60,15 +60,15 @@ setInterval(updateCountdown, 1000);
 
 
 // ===============================
-// 🗳 TEAM VOTING SYSTEM (With Sync Backups)
+// 🗳 TEAM VOTING SYSTEM
 // ===============================
-// NOTE: For true production global syncing, fetch these aggregates from a Supabase table!
-let groomCount =0; // Adjusted base defaults for visual balance on initial render
-let brideCount =0;
+let groomCount = 0; 
+let brideCount = 0;
 
 function updateVoteUI() {
   const groomCountEl = document.getElementById("groomCount");
   const brideCountEl = document.getElementById("brideCount");
+  const statusText = document.getElementById("teamStatus");
   
   if (groomCountEl && brideCountEl) {
     groomCountEl.innerText = groomCount;
@@ -87,6 +87,12 @@ function updateVoteUI() {
     brideBar.style.width = bridePercent + "%";
   }
 
+  // Update subheading message dynamically based on selection state
+  const currentTeam = localStorage.getItem("team");
+  if (currentTeam && statusText) {
+    statusText.innerText = `Showing ${currentTeam.charAt(0).toUpperCase() + currentTeam.slice(1)}'s Haldi schedule 💛`;
+  }
+
   const sliderText = document.getElementById("sliderText");
   if (sliderText) {
     if (groomPercent > bridePercent) {
@@ -99,23 +105,6 @@ function updateVoteUI() {
   }
 }
 
-function displayHaldiSchedule(team) {
-  const groomEvent = document.querySelector(".groom-event");
-  const brideEvent = document.querySelector(".bride-event");
-  const statusText = document.getElementById("teamStatus");
-
-  if (team === "groom") {
-    // Add active class to show Groom, remove from Bride
-    if (groomEvent) groomEvent.classList.add("active");
-    if (brideEvent) brideEvent.classList.remove("active");
-    if (statusText) statusText.innerText = "Showing Groom's Haldi schedule 💛";
-  } else if (team === "bride") {
-    // Add active class to show Bride, remove from Groom
-    if (brideEvent) brideEvent.classList.add("active");
-    if (groomEvent) groomEvent.classList.remove("active");
-    if (statusText) statusText.innerText = "Showing Bride's Haldi schedule 💛";
-  }
-}
 function joinTeam(team) {
   if (localStorage.getItem("team")) {
     alert("You already voted 😏");
@@ -128,10 +117,11 @@ function joinTeam(team) {
     brideCount++;
   }
 
+  // Persist choice and stamp structural attribute onto body wrapper
   localStorage.setItem("team", team);
-  displayHaldiSchedule(team);
+  document.body.setAttribute("data-team", team);
 
-  // 🎊 small confetti feedback
+  // 🎊 confetti feedback
   confetti({
     particleCount: 80,
     spread: 60,
@@ -170,7 +160,6 @@ async function submitRSVP() {
   nameInput.value = "";
   messageInput.value = "";
 
-  // Note: Local execution fallback call if real-time engine takes time to broadcast
   loadMessages();
 }
 
@@ -196,7 +185,7 @@ async function loadMessages() {
 
   data.forEach(item => {
     const div = document.createElement("div");
-    div.classList.add("msg", "card", "p-3", "mb-2", "shadow-sm"); // Boosted styling layout matching Bootstrap layout framework
+    div.classList.add("msg", "card", "p-3", "mb-2", "shadow-sm");
 
     div.innerHTML = `
       <strong>${escapeHTML(item.name)}</strong>
@@ -207,7 +196,6 @@ async function loadMessages() {
   });
 }
 
-// Helper utility function to prevent layout styling injection attacks (XSS) via guest messages
 function escapeHTML(str) {
   return str.replace(/[&<>'"]/g, 
     tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
@@ -239,11 +227,11 @@ const observer = new IntersectionObserver(entries => {
       entry.target.classList.add("show");
     }
   });
-}, { threshold: 0.1 }); // triggers when 10% of element framework hits screen window boundaries
+}, { threshold: 0.1 });
 
 
 // ===============================
-// 🚀 INITIAL LOAD
+// 🚀 INITIAL LOAD & INITIALIZATION
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
   // Bind dynamic observer targets
@@ -251,12 +239,12 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(el);
   });
 
-  updateVoteUI();
-  loadMessages();
-
-  // Restore dynamic user layout state configurations
+  // Restore dynamic user layout state configurations across refreshes safely
   const savedTeam = localStorage.getItem("team");
   if (savedTeam) {
-    displayHaldiSchedule(savedTeam);
+    document.body.setAttribute("data-team", savedTeam);
   }
+
+  updateVoteUI();
+  loadMessages();
 });

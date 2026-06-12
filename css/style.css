@@ -243,6 +243,7 @@ section, .event.full {
 .slider-bar { display: flex; height: 12px; border-radius: 20px; overflow: hidden; background: #eee; }
 #groomBar { background: linear-gradient(90deg, #4facfe, #007bff); width: 50%; transition: width 0.5s ease; }
 #brideBar { background: linear-gradient(90deg, #ff9a9e, #ff4d6d); width: 50%; transition: width 0.5s ease; }
+
 #sliderText { margin-top: 10px; font-weight: 500; color: #666; }
 
 /* ==========================================================================
@@ -263,7 +264,16 @@ section, .event.full {
   background-repeat: no-repeat;
   box-sizing: border-box;
 }
+/* Hide both Haldi sections entirely by default */
+.event.full.team-event { 
+  display: none !important; 
+}
 
+/* Display ONLY the voted team as a centered flex layout box */
+body[data-team="groom"] .event.full.groom-event,
+body[data-team="bride"] .event.full.bride-event {
+  display: flex !important;
+}
 /* Universal background image dimming tint */
 .event.full::before {
   content: "";
@@ -407,3 +417,230 @@ section, .event.full {
   .event-content h2 { font-size: 30px; }
   .vote-layout { flex-direction: column; gap: 20px; }
 }
+/* ==========================================================================
+   🌟 HALDI VISIBILITY & CENTERING ENGINE
+   ========================================================================== */
+
+/* Hide both team cards inside the Haldi section viewport frame by default */
+.haldi .team-card {
+  display: none !important;
+}
+
+/* Force only the matching voted team container card to render display state */
+body[data-team="groom"] .haldi .groom-event.team-card {
+  display: flex !important;
+}
+body[data-team="bride"] .haldi .bride-event.team-card {
+  display: flex !important;
+}
+
+/* Universal Event Layout Container */
+.event-content {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  max-width: 650px;
+  margin: auto !important;
+  padding: 30px 20px;
+  box-sizing: border-box;
+
+  /* Force absolute flex column stack rendering on all timelines */
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+/* Clear duplicate typographic rules and force scalable font values */
+.event-content h1 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 3.5rem !important;
+  color: #ff4d6d;
+  margin: 0 0 15px 0;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.event-content h2 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.2rem !important;
+  color: #ffffff;
+  margin: 0 0 15px 0;
+}
+.event-content h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem !important;
+  color: #ffffff;
+  margin: 0 0 15px 0;
+  font-weight: 300;
+}
+.event-content p {
+  font-size: 1.1rem !important;
+  color: #ffffff;
+  margin: 0 0 20px 0;
+}
+.event-content .btn {
+  position: relative;
+  z-index: 3;
+}
+
+/* ==========================================================================
+   🎉 TIMELINE BACKDROPS
+   ========================================================================== */
+.event.full {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+  
+  /* Parental alignment configuration center anchors */
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Backdrop readability contrast dimming layer filter mask */
+.event.full::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1;
+}
+
+.engagement { background-image: url('../images/engagement.jpg'); }
+.haldi { background-image: url('../images/haldi.jpeg'); }
+.wedding { background-image: url('../images/wedding.jpg'); }
+.betrothal { background-image: url('../images/betrothal.jpg'); }
+
+/* ==========================================================================
+   ✨ HALDI COLOR MIXIN OVERRIDES
+   ========================================================================== */
+.haldi .event-content h1,
+.haldi .event-content h2,
+.haldi .event-content h3,
+.haldi .event-content p {
+  color: #FFD700 !important;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.95) !important;
+}
+/* ==========================================================================
+   🎉 TIMELINE SECTIONS & BACKDROPS
+   ========================================================================== */
+.event.full {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+  
+  /* Force clean centering on background viewports */
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Dark layout overlay to keep typography highly readable over images */
+.event.full::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1;
+}
+
+.engagement { background-image: url('../images/engagement.jpg'); }
+.haldi { background-image: url('../images/haldi.jpeg'); }
+.wedding { background-image: url('../images/wedding.jpg'); }
+.betrothal { background-image: url('../images/betrothal.jpg'); }
+
+/* ==========================================================================
+   ✨ HALDI COLOR MIXIN OVERRIDES
+   ========================================================================== */
+.haldi .event-content h1,
+.haldi .event-content h2,
+.haldi .event-content h3,
+.haldi .event-content p {
+  color: #FFD700 !important;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.9) !important;
+}
+/* ==========================================================================
+   🎉 TIMELINE BACKDROPS
+   ========================================================================== */
+.event.full {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  
+  /* Centering hook for standard sections */
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+}
+
+/* Backdrop dimming filter mask */
+.event.full::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55); /* Slightly darker for enhanced legibility */
+  z-index: 1;
+}
+
+.engagement { background-image: url('../images/engagement.jpg'); }
+.haldi { background-image: url('../images/haldi.jpeg'); }
+.wedding { background-image: url('../images/wedding.jpg'); }
+.betrothal { background-image: url('../images/betrothal.jpg'); }
+
+/* ==========================================================================
+   ✨ HALDI COLOR OVERRIDES
+   ========================================================================== */
+.haldi .event-content h1,
+.haldi .event-content h2,
+.haldi .event-content h3,
+.haldi .event-content p {
+  color: #FFD700 !important;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.95) !important;
+}
+/* ==========================================================================
+   🎉 TIMELINE BACKDROPS
+   ========================================================================== */
+.event.full {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  
+  /* Centering hook for standard sections */
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+}
+
+/* Backdrop dimming filter mask */
+.event.full::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55); /* Slightly darker for enhanced legibility */
+  z-index: 1;
+}
+
+.engagement { background-image: url('../images/engagement.jpg'); }
+.haldi { background-image: url('../images/haldi.jpeg'); }
+.wedding { background-image: url('../images/wedding.jpg'); }
+.betrothal { background-image: url('../images/betrothal.jpg'); }
