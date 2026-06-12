@@ -60,7 +60,7 @@ setInterval(updateCountdown, 1000);
 
 
 // ===============================
-// 🗳 TEAM VOTING SYSTEM (Live Supabase Sync)
+// 🗳️ TEAM VOTING SYSTEM (Live Log Aggregator)
 // ===============================
 let groomCount = 0;
 let brideCount = 0;
@@ -165,7 +165,6 @@ async function joinTeam(team) {
 
   // Refresh counts from server data source instantly
   await fetchLiveVotes();
-}
 
   // Push total counters updates live to Supabase cloud storage
   if (currentRecordId) {
@@ -177,28 +176,29 @@ async function joinTeam(team) {
       })
       .eq("id", currentRecordId);
   }
-
+}
 
 
 // ===============================
-// 🚀 INITIAL LOAD & LIFECYCLE SYNC
+// 🚀 INITIAL LOAD & STATE RESTORATION
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
-  // Bind intersection observer animations
+  // Bind dynamic observer scroll animations
   document.querySelectorAll("section, .event").forEach(el => {
     observer.observe(el);
   });
 
-  // Fetch data pools safely from remote Supabase cloud tables
+  // Pull initial real-time database assets down instantly 
   fetchLiveVotes();
   loadMessages();
 
-  // Restore personal choice layout structural attribute configurations on initialization
+  // Restore personal choice layout visibility configurations safely across reloads
   const savedTeam = localStorage.getItem("team");
   if (savedTeam) {
     document.body.setAttribute("data-team", savedTeam);
   }
 });
+
 // ===============================
 // 💌 RSVP - SUBMIT
 // ===============================
