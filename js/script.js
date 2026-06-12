@@ -60,15 +60,35 @@ setInterval(updateCountdown, 1000);
 
 
 // ===============================
-// 🗳 TEAM VOTING SYSTEM
+// 🗳 TEAM VOTING SYSTEM (Live Supabase Sync)
 // ===============================
 let groomCount = 0; 
 let brideCount = 0;
+let currentRecordId = null; // Stores our database row reference id
+
+// 1. Fetch live totals from your database table
+async function fetchLiveVotes() {
+  const { data, error } = await supabaseClient
+    .from("votes")
+    .select("*")
+    .limit(1);
+
+  if (error) {
+    console.error("Error reading vote counts:", error);
+    return;
+  }
+
+  if (data && data.length > 0) {
+    currentRecordId = data[0].id;
+    groomCount = data[0].groom_votes || 0;
+    brideCount = data[0].bride_votes || 0;
+    updateVoteUI();
+  }
+}
 
 function updateVoteUI() {
   const groomCountEl = document.getElementById("groomCount");
   const brideCountEl = document.getElementById("brideCount");
-  const statusText = document.getElementById("teamStatus");
   
   if (groomCountEl && brideCountEl) {
     groomCountEl.innerText = groomCount;
@@ -87,12 +107,6 @@ function updateVoteUI() {
     brideBar.style.width = bridePercent + "%";
   }
 
-  // Update subheading message dynamically based on selection state
-  const currentTeam = localStorage.getItem("team");
-  if (currentTeam && statusText) {
-    statusText.innerText = `Showing ${currentTeam.charAt(0).toUpperCase() + currentTeam.slice(1)}'s Haldi schedule 💛`;
-  }
-
   const sliderText = document.getElementById("sliderText");
   if (sliderText) {
     if (groomPercent > bridePercent) {
@@ -103,25 +117,33 @@ function updateVoteUI() {
       sliderText.innerText = "Even match ⚖️";
     }
   }
+
+  // Sync up the text sub-headings for the Haldi cards conditionally
+  const savedTeam = localStorage.getItem("team");
+  const statusText = document.getElementById("teamStatus");
+  if (savedTeam && statusText) {
+    statusText.innerText = `Showing ${savedTeam.charAt(0).toUpperCase() + savedTeam.slice(1)}'s Haldi schedule 💛`;
+  }
 }
 
-function joinTeam(team) {
+// 2. Increment counts and push update up to database instantly
+async function joinTeam(team) {
   if (localStorage.getItem("team")) {
     alert("You already voted 😏");
     return;
   }
 
+  // Increment locally first for instant click performance feedback
   if (team === "groom") {
     groomCount++;
   } else {
     brideCount++;
   }
 
-  // Persist choice and stamp structural attribute onto body wrapper
   localStorage.setItem("team", team);
   document.body.setAttribute("data-team", team);
 
-  // 🎊 confetti feedback
+  // Trigger confetti feedback
   confetti({
     particleCount: 80,
     spread: 60,
@@ -129,8 +151,39 @@ function joinTeam(team) {
   });
 
   updateVoteUI();
+
+  // Push total counters updates live to Supabase cloud storage
+  if (currentRecordId) {
+    await supabaseClient
+      .from("votes")
+      .update({
+        groom_votes: groomCount,
+        bride_votes: brideCount
+      })
+      .eq("id", currentRecordId);
+  }
 }
 
+
+// ===============================
+// 🚀 INITIAL LOAD & STATE RESTORATION
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+  // Bind dynamic observer scroll animations
+  document.querySelectorAll("section, .event").forEach(el => {
+    observer.observe(el);
+  });
+
+  // Pull initial real-time database assets down instantly 
+  fetchLiveVotes();
+  loadMessages();
+
+  // Restore personal choice layout visibility configurations safely across reloads
+  const savedTeam = localStorage.getItem("team");
+  if (savedTeam) {
+    document.body.setAttribute("data-team", savedTeam);
+  }
+});
 
 // ===============================
 // 💌 RSVP - SUBMIT
