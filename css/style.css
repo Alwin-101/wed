@@ -421,12 +421,22 @@ body[data-team="bride"] .event.full.bride-event {
    🌟 HALDI VISIBILITY & CENTERING ENGINE
    ========================================================================== */
 
-/* Hide both team cards inside the Haldi section viewport frame by default */
+/* 1. Hide the ENTIRE Haldi section wrapper container by default */
+.haldi.event.full {
+  display: none !important;
+}
+
+/* 2. ONLY reveal the Haldi section frame if the body data-team is set to 'groom' or 'bride' */
+body[data-team="groom"] .haldi.event.full,
+body[data-team="bride"] .haldi.event.full {
+  display: flex !important; /* Restores the flex positioning context for background centering */
+}
+
+/* 3. Manage inner schedule cards inside the section */
 .haldi .team-card {
   display: none !important;
 }
 
-/* Force only the matching voted team container card to render display state */
 body[data-team="groom"] .haldi .groom-event.team-card {
   display: flex !important;
 }
@@ -434,7 +444,7 @@ body[data-team="bride"] .haldi .bride-event.team-card {
   display: flex !important;
 }
 
-/* Universal Event Layout Container */
+/* Universal Content Panel Rules */
 .event-content {
   position: relative;
   z-index: 2;
@@ -443,8 +453,6 @@ body[data-team="bride"] .haldi .bride-event.team-card {
   margin: auto !important;
   padding: 30px 20px;
   box-sizing: border-box;
-
-  /* Force absolute flex column stack rendering on all timelines */
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
@@ -644,3 +652,189 @@ body[data-team="bride"] .haldi .bride-event.team-card {
 .haldi { background-image: url('../images/haldi.jpeg'); }
 .wedding { background-image: url('../images/wedding.jpg'); }
 .betrothal { background-image: url('../images/betrothal.jpg'); }
+/* ==========================================================================
+   🌸 SMOOTH SCROLL FADE-IN ANIMATIONS
+   ========================================================================== */
+
+/* 1. Base hidden state for structural sections and inner layout contents */
+section, 
+.event,
+.event-content > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), 
+              transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity, transform;
+}
+
+/* 2. Reveal state: When the parent gets '.show', reveal it AND all of its direct child content text blocks */
+section.show, 
+.event.show,
+section.show .event-content > *,
+.event.show .event-content > *,
+.hero.show .hero-content > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 3. Stagger delays: Stagger element appearance sequentially when the section handles a view event */
+section.show .event-content > h1, .event.show .event-content > h1 { transition-delay: 0.1s; }
+section.show .event-content > p,  .event.show .event-content > p  { transition-delay: 0.25s; }
+section.show .event-content > h2, .event.show .event-content > h2 { transition-delay: 0.4s; }
+section.show .event-content > h3, .event.show .event-content > h3 { transition-delay: 0.5s; }
+section.show .event-content > .btn, .event.show .event-content > .btn { transition-delay: 0.6s; }
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
+/* ==========================================================================
+   🗳️ VOTING BUTTONS SLIDE-IN ANIMATION
+   ========================================================================== */
+
+/* 1. Set initial hidden/off-screen positions */
+#groomBtn {
+  opacity: 0;
+  transform: translateX(-150px); /* Pushes the Groom button far out to the left */
+  transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), 
+              transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity, transform;
+}
+
+#brideBtn {
+  opacity: 0;
+  transform: translateX(150px); /* Pushes the Bride button far out to the right */
+  transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), 
+              transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity, transform;
+}
+
+/* 2. Animate them into the center when the voting section becomes visible (.show) */
+.vote-section.show #groomBtn,
+.vote-section.show #brideBtn {
+  opacity: 1;
+  transform: translateX(0); /* Snaps them perfectly back to their layout home */
+}
+
+/* 3. Give them a slight stagger delay so the layout feels ultra-premium */
+.vote-section.show #groomBtn {
+  transition-delay: 0.2s;
+}
+.vote-section.show #brideBtn {
+  transition-delay: 0.4s; /* Bride slides in just an instant after the Groom */
+}
+/* ==========================================================================
+   🗳️ VOTING SECTION SCROLL ANIMATIONS (COMPLETE)
+   ========================================================================== */
+
+/* 1. Prevent mobile horizontal screen wobble from off-screen buttons */
+.vote-section {
+  overflow-x: hidden;
+}
+
+/* 2. Set the initial invisible & lowered state for voting text elements */
+.vote-section h2,
+.vote-section p,
+.vote-section #teamStatus,
+.vote-section .slider-container,
+.vote-section .vote-stats {
+  opacity: 0;
+  transform: translateY(25px);
+  transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), 
+              transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity, transform;
+}
+
+/* 3. Set the initial off-screen sideways positions for the buttons */
+#groomBtn {
+  opacity: 0;
+  transform: translateX(-150px);
+  transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), 
+              transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity, transform;
+}
+#brideBtn {
+  opacity: 0;
+  transform: translateX(150px);
+  transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), 
+              transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity, transform;
+}
+
+/* ==========================================================================
+   🎉 REVEAL STATES (Triggered on Scroll via JS '.show' class)
+   ========================================================================== */
+
+/* Make all text elements and side buttons snap back to their crisp, final layout positions */
+.vote-section.show h2,
+.vote-section.show p,
+.vote-section.show #teamStatus,
+.vote-section.show .slider-container,
+.vote-section.show .vote-stats,
+.vote-section.show #groomBtn,
+.vote-section.show #brideBtn {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* ==========================================================================
+   ⏱️ STAGGERED ENTRANCE DELAYS
+   ========================================================================== */
+.vote-section.show h2 { transition-delay: 0.0s; }               /* Main Title pops first */
+.vote-section.show p, 
+.vote-section.show #teamStatus { transition-delay: 0.15s; }      /* Subheadings follow */
+.vote-section.show #groomBtn { transition-delay: 0.35s; }        /* Groom slides from Left */
+.vote-section.show #brideBtn { transition-delay: 0.5s; }         /* Bride slides from Right */
+.vote-section.show .slider-container { transition-delay: 0.7s; } /* Interactive percentage bar loads */
+.vote-section.show .vote-stats { transition-delay: 0.85s; }       /* Individual score badges render last */
+.note {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #fff0f5, #ffffff);
+}
+
+/* keep content above flowers */
+.note .event-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* flower container ONLY inside section */
+.flower-zone {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.flower {
+  position: absolute;
+  top: -10px;
+  font-size: 18px;
+  animation: fall linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(120vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+/* Custom typography scaling for the couple's signatures */
+.event-content .couple-names {
+  font-family: 'Great Vibes', cursive !important;
+  font-size: 2.8rem !important; /* Increases the size significantly */
+  color: #ff4d6d !important;    /* Uses your custom theme pink color */
+  margin-top: 20px !important;  /* Adds some elegant spacing above the names */
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}

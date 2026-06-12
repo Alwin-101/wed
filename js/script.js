@@ -315,3 +315,24 @@ document.addEventListener("DOMContentLoaded", () => {
   updateVoteUI();
   loadMessages();
 });
+
+function createNoteFlowers() {
+  const zone = document.querySelector(".flower-zone");
+  const emojis = ["🌸", "🌷", "💮", "🌺"];
+
+  for (let i = 0; i < 50; i++) {
+    const flower = document.createElement("div");
+    flower.classList.add("flower");
+
+    flower.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+
+    flower.style.left = Math.random() * 100 + "%";
+    flower.style.animationDuration = 3 + Math.random() * 4 + "s";
+    flower.style.fontSize = 14 + Math.random() * 18 + "px";
+    flower.style.animationDelay = Math.random() * 3 + "s";
+
+    zone.appendChild(flower);
+  }
+}
+
+createNoteFlowers();
